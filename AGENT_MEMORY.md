@@ -88,6 +88,15 @@ What is unfinished or broken:
 Next steps recommended:
 Log entries
 
+### Session 4 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Include the remaining current project files in the Phase 1 checkpoint.
+- **What was done:** Added the IntelliJ project metadata, supplied timetable JSON files, and generated `RoomWise/out` artifacts that were present locally. Local database properties were intentionally excluded because they contain credentials.
+- **Files created or changed:** `.idea/**`, `RoomWise/data/labs.json`, `RoomWise/data/theory.json`, and non-secret files under `RoomWise/out/**`.
+- **Tests run and result:** Not run; this checkpoint update does not change source behavior.
+- **What is unfinished or broken:** Generated Maven output under `RoomWise/target/**` remains ignored, and local credential files remain excluded.
+- **Next steps recommended:** Continue implementation from the updated Phase 1 checkpoint.
+
 ### Session 3 — 2026-10-28
 - **Agent/Person:** Copilot
 - **Goal:** Create the requested Phase 1 Git checkpoint.
