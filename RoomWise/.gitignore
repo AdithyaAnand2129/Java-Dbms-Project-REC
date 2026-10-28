@@ -1,9 +1,9 @@
 # ── Credentials (never commit these) ──────────────────────────────────────────
-.env
 src/main/resources/db.properties
 
 # ── Compiled output ────────────────────────────────────────────────────────────
 target/
+out/
 *.class
 *.jar
 
@@ -25,4 +25,3 @@ Thumbs.db
 
 # ── Logs ──────────────────────────────────────────────────────────────────────
 *.log
-

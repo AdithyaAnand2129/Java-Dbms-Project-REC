@@ -54,7 +54,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.roomwise.Main</mainClass>
+              <mainClass>roomwise.Main</mainClass>
             </manifest>
           </archive>
         </configuration>

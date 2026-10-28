@@ -2,10 +2,8 @@
 # Copy this file to db.properties and fill in your values.
 # db.properties is git-ignored. NEVER commit real credentials.
 #
-# When Docker is used (docker-compose up -d):
-#   db.url  = jdbc:mysql://localhost:3306/roomwise_db?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
-#   db.user = roomwise_user           (must match MYSQL_USER in .env)
-#   db.password = change_me_pass      (must match MYSQL_PASSWORD in .env)
+# For a local MySQL Server installation, update these values to match your
+# MySQL database, username, and password.
 
 db.url=jdbc:mysql://localhost:3306/roomwise_db?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true
 db.user=roomwise_user

@@ -5,12 +5,12 @@ The full college timetable exports are included in this folder:
 - `theory.json` — 3,030 theory records
 - `labs.json` — 1,137 lab records
 
-Run `schema.sql` once, configure `src/main/resources/db.properties`, then run:
+For a MySQL Workbench import without running Java, execute
+`../src/main/resources/schema.sql` first and then
+`../src/main/resources/real_data.sql`. The SQL file is generated from both
+JSON files and contains all 4,167 timetable records.
 
-```text
-java -cp target/classes;path\\to\\mysql-connector-j.jar com.roomwise.util.CollegeTimetableImporter data/theory.json data/labs.json
-```
-
-The importer accepts the original names and locations too. It parses all theory
-and lab records, normalizes day aliases such as `wed` and `wednesday`, and loads
-the recurring weekly schedule into MySQL.
+The SQL conversion retains room, weekday, times, course, section, teacher, and
+class-type metadata. Options 1 and 2 intentionally display only the fields
+students need; options 3 and 4 use the retained metadata for safe bookings and
+detailed class searches.

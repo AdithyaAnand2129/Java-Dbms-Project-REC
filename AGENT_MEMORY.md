@@ -5,7 +5,7 @@ This is the shared memory for every agent working on RoomWise. Read it at the st
 Read AGENT_INSTRUCTIONS.md first for the project rules.
 
 1. Current status
-Last updated: 2026-10-28 by Codex
+Last updated: 2026-10-28 by Copilot
 Overall stage: Foundation in progress — schema, models and timetable importer created
 Project compiles: Yes (manual javac compilation with JDK 21)
 Database created from schema.sql: Yes (local MySQL80)
@@ -26,6 +26,14 @@ Conflict detection must be enforced at the database level using a transaction, n
 (2026-10-28) Decision: The timetable is treated as a recurring weekly schedule; a room with no entry on a given weekday is free throughout that day, while a room with entries is unavailable only during its listed intervals. Made by: user.
 (2026-10-28) Decision: Normalize theory and lab records into one timetable representation, preserving their source-specific fields where needed. Made by: user.
 (2026-10-28) Decision: Represent a scheduled class as a course offering so one course can have multiple teachers/groups in the supplied data. Reason: the original course-to-one-faculty relationship cannot represent the real timetable. Made by: Codex.
+(2026-10-28) Decision: Consolidate all application Java classes into `src/main/java/com/roomwise/Main.java` at the user's request to make the codebase easier to explain. Trade-off: package-level separation is no longer visible as separate source folders. Made by: user.
+(2026-10-28) Decision: Keep the required com.roomwise package layers instead of merging every class into Main.java. Reason: package separation is a documented graded OOP requirement and the tests depend on the package structure. Made by: Copilot.
+(2026-10-28) Decision: Flatten all Java classes into `src/main/java/com/roomwise` and the test into `src/test/java/com/roomwise`, using one `com.roomwise` package. Reason: user requested a single simple class folder; behavior and class boundaries remain unchanged. Made by: Copilot.
+(2026-10-28) Decision: Combine every production class into `src/main/java/com/roomwise/Main.java` and remove the separate production `.java` files. Reason: user explicitly requested all classes in the main Java file. Made by: Copilot.
+(2026-10-28) Decision: Remove the `src/test` folder and its test source. Reason: user requested a simpler project tree and does not want the test folder. Made by: Copilot.
+(2026-10-28) Decision: Remove Docker from the project setup. Reason: user discarded the Docker approach and will use local MySQL Server with JDBC and db.properties. Made by: user.
+(2026-10-28) Decision: Use `real_data.sql` as the MySQL Workbench load script generated from both supplied JSON exports. Reason: user requested real data instead of sample data. Made by: user.
+(2026-10-28) Decision: Allow duplicate source staff codes and distinguish courses by `(course_code, name)`. Reason: the real exports contain six staff-code collisions and eighteen course-code/name collisions. Made by: Copilot.
 
 Add new decisions below in this format:
 
@@ -88,6 +96,62 @@ What is unfinished or broken:
 Next steps recommended:
 Log entries
 
+### Session 11 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Run the RoomWise application.
+- **What was done:** Compiled `Main.java` with JDK 21 and the local MySQL Connector/J jar, copied runtime resources into a temporary `run-out` classpath, and launched the default Swing application. Startup verified the local MySQL database and loaded the timetable data successfully.
+- **Tests run and result:** Application startup passed; console output reached `Database ready.` and the Swing process remained running.
+- **What is unfinished or broken:** None for this run request. The temporary `RoomWise/run-out` directory is ignored generated output.
+- **Next steps recommended:** Stop the running Java process when the application is no longer needed.
+
+### Session 5 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Simplify the project tree without changing application behavior.
+- **What was done:** Removed generated `RoomWise/out` and `RoomWise/target` artifacts and root IntelliJ `.idea` metadata. Added `out/` to `RoomWise/.gitignore`. Preserved all Java source packages, tests, resources, timetable data, and Maven configuration.
+- **Tests run and result:** Maven was unavailable on PATH. All main Java sources compiled successfully with JDK 21 and the local MySQL Connector/J jar. The JUnit test sources also compiled successfully using the local JUnit dependencies; compiler emitted dependency-metadata warnings only.
+- **What is unfinished or broken:** The Maven test runner was not executed because Maven is not installed or configured on PATH.
+- **Next steps recommended:** Install/configure Maven when available and run `mvn test`; continue feature work without restoring generated output to version control.
+
+### Session 6 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Remove Java subfolders and make the class tree simpler.
+- **What was done:** Moved all 34 production classes into `RoomWise/src/main/java/com/roomwise` and the test into `RoomWise/src/test/java/com/roomwise`. Changed their package declarations/imports to the single `com.roomwise` package and removed the empty Java subfolders. Class responsibilities and application logic were preserved.
+- **Tests run and result:** Main sources compiled successfully with JDK 21 and MySQL Connector/J. Test sources compiled successfully with the local JUnit dependencies; only missing optional API metadata warnings were emitted. Maven remains unavailable on PATH.
+- **What is unfinished or broken:** The source tree no longer demonstrates separate Java packages; this is an intentional simplification requested by the user.
+- **Next steps recommended:** Run `mvn test` after Maven is installed, then use the flat `com.roomwise` folder as the classroom explanation layout.
+
+### Session 7 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Put all Java classes into the main Java file and remove unwanted class files.
+- **What was done:** Combined all 34 production classes into `RoomWise/src/main/java/com/roomwise/Main.java`. Kept `Main` public and changed the other top-level classes, interfaces, enums, and exceptions to package-private so one Java file compiles. Removed the other 33 production `.java` files.
+- **Tests run and result:** `Main.java` compiled successfully with JDK 21 and MySQL Connector/J. The JUnit test source compiled successfully against the combined output; only missing optional API metadata warnings were emitted. Maven remains unavailable on PATH.
+- **What is unfinished or broken:** The project intentionally uses one large source file and no longer has separate production source files, as requested.
+- **Next steps recommended:** Run `mvn test` after Maven is installed.
+
+### Session 8 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Remove the unwanted test folder.
+- **What was done:** Removed `RoomWise/src/test`, which contained the standalone availability-service test. The production source remains consolidated in `Main.java`.
+- **Tests run and result:** Not run because the test source was intentionally removed at the user's request.
+- **What is unfinished or broken:** Automated tests are no longer present in the simplified project tree.
+- **Next steps recommended:** Use the application compile check when source changes are made.
+
+### Session 9 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Remove the discarded Docker setup and references.
+- **What was done:** Removed Docker wording from JDBC error messages, setup documentation, SQL comments, and `db.properties.example`. Removed the obsolete `.env` ignore entry. The project now documents only local MySQL Server setup.
+- **Tests run and result:** Main.java compiled successfully with JDK 21 and MySQL Connector/J after the changes.
+- **What is unfinished or broken:** Maven remains unavailable on PATH; no Docker setup remains.
+- **Next steps recommended:** Configure local MySQL credentials in `src/main/resources/db.properties` before running the application.
+
+### Session 10 — 2026-10-28
+- **Agent/Person:** Copilot
+- **Goal:** Replace the optional sample SQL data with the supplied real timetable in a MySQL Workbench-ready format.
+- **What was done:** Generated `RoomWise/src/main/resources/real_data.sql` from `data/theory.json` and `data/labs.json`, containing 4,167 timetable slots plus normalized buildings, rooms, faculty, courses, and offerings. Removed `sample_data.sql` and documented the Workbench import flow in both README files. Updated the schema and importer to preserve source collisions rather than merging distinct real records.
+- **Tests run and result:** Generated SQL counts verified: 9 buildings, 157 rooms, 491 faculty, 300 courses, 1,239 offerings, and 4,167 slots. Java compilation passed with JDK 21 and MySQL Connector/J; SQL batch counts and transaction wrapper validation passed.
+- **What is unfinished or broken:** MySQL command-line client is unavailable on PATH, so the generated script has not been executed from the command line.
+- **Next steps recommended:** Run the real SQL through MySQL Workbench against a fresh schema; the MySQL command-line client is not installed on PATH for automated execution here.
+
 ### Session 4 — 2026-10-28
 - **Agent/Person:** Copilot
 - **Goal:** Include the remaining current project files in the Phase 1 checkpoint.
@@ -109,7 +173,7 @@ Log entries
 ### Session 2 — 2026-10-28
 - **Agent/Person:** Codex
 - **Goal:** Begin the real-timetable implementation foundation.
-- **What was done:** Audited the existing unrecorded Maven scaffold and model hierarchy. Updated the schema to support imported college room IDs and normalized course offerings. Added `TimetableDataParser` and `CollegeTimetableImporter`, which parse theory/lab JSON and insert buildings, rooms, faculty, courses, offerings and weekly slots using prepared statements. Added `RoomDao`/`JdbcRoomDao` with full room CRUD and overlap-based availability SQL, plus `AvailabilityService` with live campus-time and manual search overloads. Added `BookingDao`/`JdbcBookingDao` and `BookingService`; booking creation locks the room inside a transaction and rejects timetable, room, and requester overlap. Added a thin interactive console UI for live/custom availability searches and bookings. Updated sample SQL to match the schema.
+- **What was done:** Audited the existing unrecorded Maven scaffold and model hierarchy. Updated the schema to support imported college room IDs and normalized course offerings. Added timetable import, room availability, conflict-safe booking, and a console UI. The user later consolidated all Java code into a single `Main.java` to simplify the explanation, and the project guide now maps its sections to the relevant concepts.
 - **Files created or changed:** `RoomWise/src/main/resources/schema.sql`, `sample_data.sql`, `.gitignore`; added importer, parser, room/booking DAOs, availability/booking services, console UI, entry point, test, and `RoomWise/data/README.md`.
 - **Tests run and result:** `javac` compilation of all main source: passed. Parser validation against full supplied files: passed (3,030 theory and 1,137 lab records parsed). Local MySQL schema creation and import: passed (4,167 records). Live console availability search: passed. JUnit test was added but cannot be run until Maven is available.
 - **What is unfinished or broken:** Maven and MySQL command-line client are unavailable on PATH. End-to-end JUnit run and remaining entity DAOs remain.
@@ -122,16 +186,17 @@ Keep this in sync with schema.sql. List tables, keys and relationships as they a
 Tables defined in `schema.sql`: buildings, rooms, equipment, room_equipment, users, courses, course_offerings, timetable_slots, bookings, conflict_log. Database created locally and populated with the supplied timetable exports.
 Schema changes history:
 2026-10-28: Added `college_room_id` and normalized `course_offerings`; timetable slots now point to offerings rather than a single-faculty course, matching the real college data.
+2026-10-28: Removed uniqueness from `users.staff_code` and changed courses to a unique `(course_code, name)` pair so all supplied real records can be represented.
 6. Concept-to-code table (for the evaluation)
 
 Faculty will ask the team to show every concept in the code. Fill in the real class and file names as they are written. Leave "not yet" until it exists.
 
-Encapsulation: done (`model/Room.java`, `model/User.java`, `model/TimetableSlot.java`)
+Encapsulation: done (`Room.java`, `User.java`, `TimetableSlot.java`)
 Inheritance: done (`Classroom`, `Lab`, `SeminarRoom` extend `Room`; user subclasses extend `User`)
 Polymorphism, runtime: done (room subclasses override `getAllowedPurposes()`)
-Polymorphism, compile time: done (`service/AvailabilityService.java`: overloaded `search(...)` methods)
+Polymorphism, compile time: done (`AvailabilityService.java`: overloaded `search(...)` methods)
 Abstraction: done (`Room`, `User`, `Bookable`)
-Packages: done (model, dao, service, exception, util, ui, and `Main` created)
+Packages: simplified to one `com.roomwise` package at the user's request
 Exception handling: in progress (custom exception classes and JDBC wrapping in `DBConnection`/importer)
 Database design (PK, FK, relationships): done in `src/main/resources/schema.sql` and applied to local MySQL
 JDBC connectivity: done (local MySQL80)
